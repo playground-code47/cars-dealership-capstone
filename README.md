@@ -92,7 +92,17 @@ The backend tests use Django's isolated test database. `seed_demo_data` uses sta
 
 ## Deployment
 
-[`render.yaml`](./render.yaml) describes a Render API service, React static site, and PostgreSQL database. Review provider pricing/availability and the generated hostnames before deploying. Deployment requires a Render account and authorization; no live URL is claimed in this workspace. After deployment, set the exact static-site origin in the API's CORS settings if the generated hostname does not match the configured origin pattern. The SQLite configuration is suitable for local development only; the blueprint uses managed PostgreSQL for persistent deployment storage.
+[`render.yaml`](./render.yaml) describes a Render API service, React static site, and PostgreSQL database. To deploy it manually:
+
+1. Sign in to Render and connect the GitHub account that can access this repository.
+2. Choose **New → Blueprint**, select `playground-code47/cars-dealership-capstone`, and use the `main` branch.
+3. Review the services and current pricing before applying the blueprint. The database and web service may incur charges.
+4. Apply the blueprint and wait for both API and frontend builds to finish.
+5. Confirm the API responds at `https://<api-service-host>/api/getalldealers/`. Open the frontend URL and register a real user to test login and review submission.
+6. If the generated frontend hostname does not match `CORS_ALLOWED_ORIGIN_REGEXES`, set `CORS_ALLOWED_ORIGINS` on the API service to the exact frontend origin (for example `https://<static-site-host>`), then redeploy the API.
+7. Record the real frontend deployment URL in [`deploymentURL.txt`](./deploymentURL.txt) and capture deployed screenshots only after verifying the live pages.
+
+The blueprint sets `DEBUG=False`, creates a secret key, configures the API host, and uses managed PostgreSQL for persistent data. Review/adjust the generated hostnames and environment settings before launch. SQLite is for local development only. No account credentials, payment approval, deployment, or live URL are assumed.
 
 ## CI
 
