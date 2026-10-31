@@ -36,8 +36,27 @@ curl.exe -sS "$base/getdealersbyState/KS/"
 curl.exe -sS "$base/getallcarmakes/"
 Invoke-CurlJson "/analyzereview/" @{ review = "Fantastic services" }
 
+# IBM-compatible routes (these are rooted at port 8000, not under /api).
+$root = "http://127.0.0.1:8000"
+curl.exe -sS "$root/fetchDealers"
+curl.exe -sS "$root/fetchDealer/$dealerId"
+curl.exe -sS "$root/fetchDealers/Kansas"
+curl.exe -sS "$root/fetchReviews/dealer/$dealerId"
+curl.exe -sS "$root/djangoapp/get_cars"
+curl.exe -sS "$root/analyze/Fantastic%20services"
+curl.exe -sS "$root/djangoapp/logout"
+$ibmLogin = @{ userName = "YOUR_USERNAME"; password = "YOUR_PASSWORD" } | ConvertTo-Json -Compress
+curl.exe -sS -X POST -H "Content-Type: application/json" -d $ibmLogin "$root/djangoapp/login"
+
 # Authenticated review submission and logout.
-Invoke-CurlJson "/dealers/$dealerId/reviews/" @{ text = "A helpful and friendly team." } $token
+Invoke-CurlJson "/dealers/$dealerId/reviews/" @{
+    text = "A helpful and friendly team."
+    purchase = $true
+    purchase_date = "2026-10-30"
+    car_make = "Toyota"
+    car_model = "Camry"
+    car_year = 2024
+} $token
 curl.exe -sS -X POST -H "Authorization: Token $token" "$base/logoutuser/"
 ```
 

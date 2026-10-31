@@ -6,7 +6,20 @@ from .models import CarMake, Dealership
 class DealershipSerializer(serializers.ModelSerializer):
     class Meta:
         model = Dealership
-        fields = ["id", "name", "city", "state", "address", "phone", "description"]
+        fields = [
+            "id",
+            "name",
+            "city",
+            "state",
+            "address",
+            "phone",
+            "description",
+            "zip",
+            "lat",
+            "long",
+            "short_name",
+            "full_name",
+        ]
 
 
 class CarMakeSerializer(serializers.ModelSerializer):

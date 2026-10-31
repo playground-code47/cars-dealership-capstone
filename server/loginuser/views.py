@@ -1,10 +1,34 @@
+from django.contrib.auth import authenticate
 from rest_framework import generics
 from rest_framework.authtoken.models import Token
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from .serializers import LoginSerializer, RegistrationSerializer
+
+
+@api_view(["POST"])
+@permission_classes([AllowAny])
+def ibm_login(request):
+    username = request.data.get("userName")
+    password = request.data.get("password")
+    if not isinstance(username, str) or not username or not isinstance(password, str):
+        return Response(
+            {"error": "Provide userName and password."},
+            status=400,
+        )
+    user = authenticate(request=request, username=username, password=password)
+    if user is None:
+        return Response({"error": "Invalid userName or password."}, status=401)
+    return Response({"userName": user.username, "status": "Authenticated"})
+
+
+@api_view(["GET"])
+@permission_classes([AllowAny])
+def ibm_logout(request):
+    return Response({"userName": ""})
 
 
 class RegisterView(generics.CreateAPIView):

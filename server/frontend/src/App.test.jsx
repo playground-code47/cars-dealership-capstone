@@ -39,20 +39,29 @@ describe("account and review flows", () => {
   });
 
   it("registers an account and establishes the authenticated state", async () => {
-    vi.spyOn(globalThis, "fetch")
+    const fetchMock = vi.spyOn(globalThis, "fetch")
       .mockResolvedValueOnce(jsonResponse({ token: "registered-token", username: "new-customer" }, 201))
+      .mockResolvedValueOnce(jsonResponse([]))
       .mockResolvedValueOnce(jsonResponse([]));
     const user = userEvent.setup();
     renderAt("/register");
 
     await user.type(screen.getByLabelText("Username"), "new-customer");
+    await user.type(screen.getByLabelText("First Name"), "New");
+    await user.type(screen.getByLabelText("Last Name"), "Customer");
     await user.type(screen.getByLabelText("Email"), "new@example.test");
     await user.type(screen.getByLabelText("Password"), "Distinctive-passphrase-72!");
     await user.type(screen.getByLabelText("Confirm password"), "Distinctive-passphrase-72!");
-    await user.click(screen.getByRole("button", { name: "Create account" }));
+    await user.click(screen.getByRole("button", { name: "Register" }));
 
     expect(await screen.findByText("Hi, new-customer")).toBeInTheDocument();
     expect(JSON.parse(localStorage.getItem("dealershipUser")).token).toBe("registered-token");
+    expect(JSON.parse(fetchMock.mock.calls[0][1].body)).toMatchObject({
+      username: "new-customer",
+      first_name: "New",
+      last_name: "Customer",
+      email: "new@example.test",
+    });
   });
 
   it("rejects mismatched registration passwords without calling the API", async () => {
@@ -61,10 +70,12 @@ describe("account and review flows", () => {
     renderAt("/register");
 
     await user.type(screen.getByLabelText("Username"), "new-customer");
+    await user.type(screen.getByLabelText("First Name"), "New");
+    await user.type(screen.getByLabelText("Last Name"), "Customer");
     await user.type(screen.getByLabelText("Email"), "new@example.test");
     await user.type(screen.getByLabelText("Password"), "Distinctive-passphrase-72!");
     await user.type(screen.getByLabelText("Confirm password"), "Different-passphrase-72!");
-    await user.click(screen.getByRole("button", { name: "Create account" }));
+    await user.click(screen.getByRole("button", { name: "Register" }));
 
     expect(await screen.findByRole("alert")).toHaveTextContent("Passwords do not match.");
     expect(fetchMock).not.toHaveBeenCalled();
@@ -97,11 +108,17 @@ describe("account and review flows", () => {
     const fetchMock = vi.spyOn(globalThis, "fetch")
       .mockResolvedValueOnce(jsonResponse(dealer))
       .mockResolvedValueOnce(jsonResponse([]))
+      .mockResolvedValueOnce(jsonResponse({ CarModels: [{ CarMake: "Toyota", CarModel: "Camry" }] }))
       .mockResolvedValueOnce(jsonResponse({
         id: 7,
         dealership: 1,
         reviewer: "reviewer",
         text: "A friendly team.",
+        purchase: true,
+        purchase_date: "2026-01-01",
+        car_make: "Toyota",
+        car_model: "Camry",
+        car_year: 2024,
         created_at: "2026-01-01T00:00:00Z",
       }, 201))
       .mockResolvedValueOnce(jsonResponse(dealer))
@@ -110,17 +127,39 @@ describe("account and review flows", () => {
         dealership: 1,
         reviewer: "reviewer",
         text: "A friendly team.",
+        purchase: true,
+        purchase_date: "2026-01-01",
+        car_make: "Toyota",
+        car_model: "Camry",
+        car_year: 2024,
         created_at: "2026-01-01T00:00:00Z",
-      }]));
+      }]))
+      .mockResolvedValueOnce(jsonResponse({ CarModels: [{ CarMake: "Toyota", CarModel: "Camry" }] }))
+      .mockResolvedValueOnce(jsonResponse({ sentiment: "positive", score: 1 }));
     const user = userEvent.setup();
     renderAt("/dealers/1");
 
     expect(await screen.findByRole("heading", { name: "Heartland Motors" })).toBeInTheDocument();
     await user.type(screen.getByLabelText("Your review"), "A friendly team.");
+    await user.click(screen.getByLabelText("I purchased a vehicle from this dealership"));
+    await user.type(screen.getByLabelText("Purchase date"), "2026-01-01");
+    await user.selectOptions(screen.getByLabelText("Car make"), "Toyota");
+    await user.selectOptions(screen.getByLabelText("Car model"), "Camry");
+    await user.type(screen.getByLabelText("Car year"), "2024");
     await user.click(screen.getByRole("button", { name: "Post review" }));
 
     expect(await screen.findByText("Thanks — your review has been added.")).toBeInTheDocument();
-    await waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(5));
+    expect(await screen.findByRole("img", { name: "positive sentiment" })).toBeInTheDocument();
+    expect(await screen.findByText(/Purchased 2024 Toyota Camry/)).toBeInTheDocument();
+    await waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(8));
     expect(screen.getAllByText("A friendly team.").length).toBeGreaterThan(0);
+    const submission = fetchMock.mock.calls.find(([, options]) => options?.method === "POST");
+    expect(JSON.parse(submission[1].body)).toMatchObject({
+      purchase: true,
+      purchase_date: "2026-01-01",
+      car_make: "Toyota",
+      car_model: "Camry",
+      car_year: 2024,
+    });
   });
 });

@@ -73,6 +73,12 @@ h1, h2, h3 { font-family: Manrope, sans-serif; }
 .review-card time { color: #89928b; font-size: 11px; }
 .review-form { margin-top: 28px; padding: 24px; border: 1px solid #e8ebe5; border-radius: 12px; background: white; }
 .review-form h3 { margin-top: 0; }.review-form textarea { min-height: 120px; resize: vertical; }.review-form .button { margin-top: 15px; }
+.review-form input:not([type="checkbox"]), .review-form select { width: 100%; padding: 12px 13px; border: 1px solid #dce2dc; border-radius: 8px; background: white; }
+.review-form .purchase-toggle { display: flex; align-items: center; gap: 9px; }
+.review-form .purchase-toggle input { width: auto; }
+.purchase-fields { margin-top: 16px; padding-top: 12px; border-top: 1px solid #e8ebe5; }
+.review-purchase { color: #647169; font-size: 13px; }
+.review-sentiment { display: flex; align-items: center; gap: 9px; color: #347b58; font-weight: 700; }
 .notice { padding: 12px 14px; border-radius: 8px; background: #f0f3eb; color: #58665c; font-size: 13px; }
 .notice.error { background: #fff0ed; color: #9c3e2e; }.notice.success { background: #eaf5ed; color: #286646; }
 .logout-notice { max-width: 1160px; margin: 0 auto; }

@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
@@ -14,22 +15,28 @@ export default function Register() {
     event.preventDefault();
     setError("");
     setBusy(true);
+
     const form = new FormData(event.currentTarget);
     const password = form.get("password");
+
     if (password !== form.get("confirmPassword")) {
       setError("Passwords do not match.");
       setBusy(false);
       return;
     }
+
     try {
       const user = await apiRequest("/register/", {
         method: "POST",
         body: JSON.stringify({
           username: form.get("username"),
+          first_name: form.get("first_name"),
+          last_name: form.get("last_name"),
           email: form.get("email"),
           password,
         }),
       });
+
       signIn(user);
       navigate("/");
     } catch (requestError) {
@@ -45,17 +52,34 @@ export default function Register() {
         <p className="eyebrow">JOIN OUR COMMUNITY</p>
         <h1>Create your account</h1>
         <p>Save time, share your experience, and find your people.</p>
+
         <label htmlFor="username">Username</label>
         <input id="username" name="username" autoComplete="username" minLength={3} required />
+
+        <label htmlFor="first_name">First Name</label>
+        <input id="first_name" name="first_name" autoComplete="given-name" required />
+
+        <label htmlFor="last_name">Last Name</label>
+        <input id="last_name" name="last_name" autoComplete="family-name" required />
+
         <label htmlFor="email">Email</label>
         <input id="email" name="email" type="email" autoComplete="email" required />
+
         <label htmlFor="password">Password</label>
         <input id="password" name="password" type="password" autoComplete="new-password" minLength={8} required />
+
         <label htmlFor="confirmPassword">Confirm password</label>
         <input id="confirmPassword" name="confirmPassword" type="password" autoComplete="new-password" required />
+
         {error && <p className="notice error" role="alert">{error}</p>}
-        <button className="button button-full" disabled={busy}>{busy ? "Creating account…" : "Create account"}</button>
-        <p className="auth-foot">Already a member? <Link to="/login">Log in</Link></p>
+
+        <button className="button button-full" disabled={busy}>
+          {busy ? "Registering..." : "Register"}
+        </button>
+
+        <p className="auth-foot">
+          Already a member? <Link to="/login">Log in</Link>
+        </p>
       </form>
     </main>
   );

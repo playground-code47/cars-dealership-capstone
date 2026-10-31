@@ -12,6 +12,11 @@ class Review(models.Model):
         settings.AUTH_USER_MODEL, related_name="dealer_reviews", on_delete=models.CASCADE
     )
     text = models.TextField(max_length=2000)
+    purchase = models.BooleanField(default=False)
+    purchase_date = models.DateField(null=True, blank=True)
+    car_make = models.CharField(max_length=100, blank=True, default="")
+    car_model = models.CharField(max_length=100, blank=True, default="")
+    car_year = models.PositiveSmallIntegerField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:

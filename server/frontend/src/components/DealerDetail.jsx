@@ -9,17 +9,26 @@ export default function DealerDetail() {
   const { user } = useAuth();
   const [dealer, setDealer] = useState(null);
   const [reviews, setReviews] = useState([]);
+  const [carModels, setCarModels] = useState([]);
   const [text, setText] = useState("");
+  const [purchase, setPurchase] = useState(false);
+  const [purchaseDate, setPurchaseDate] = useState("");
+  const [carMake, setCarMake] = useState("");
+  const [carModel, setCarModel] = useState("");
+  const [carYear, setCarYear] = useState("");
+  const [sentiment, setSentiment] = useState("");
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
 
   async function loadDetails() {
-    const [dealerData, reviewData] = await Promise.all([
+    const [dealerData, reviewData, carModelsData] = await Promise.all([
       apiRequest(`/getdealerbyid/${dealerId}/`),
       apiRequest(`/getdealerreviews/${dealerId}/`),
+      apiRequest("/djangoapp/get_cars"),
     ]);
     setDealer(dealerData);
     setReviews(reviewData);
+    setCarModels(carModelsData.CarModels);
   }
 
   useEffect(() => {
@@ -34,11 +43,33 @@ export default function DealerDetail() {
       await apiRequest(`/dealers/${dealerId}/reviews/`, {
         method: "POST",
         token: user?.token,
-        body: JSON.stringify({ text }),
+        body: JSON.stringify({
+          text,
+          purchase,
+          purchase_date: purchase ? purchaseDate : null,
+          car_make: purchase ? carMake : "",
+          car_model: purchase ? carModel : "",
+          car_year: purchase && carYear ? Number(carYear) : null,
+        }),
       });
+      setSentiment("");
       setText("");
+      setPurchase(false);
+      setPurchaseDate("");
+      setCarMake("");
+      setCarModel("");
+      setCarYear("");
       setMessage("Thanks — your review has been added.");
       await loadDetails();
+      try {
+        const analysis = await apiRequest("/analyzereview/", {
+          method: "POST",
+          body: JSON.stringify({ review: text }),
+        });
+        setSentiment(analysis.sentiment);
+      } catch (analysisError) {
+        setError(`Your review was posted, but sentiment analysis failed: ${analysisError.message}`);
+      }
     } catch (requestError) {
       setError(requestError.message);
     }
@@ -65,6 +96,12 @@ export default function DealerDetail() {
           <article className="review-card" key={review.id}>
             <div className="review-avatar">{review.reviewer.slice(0, 1).toUpperCase()}</div>
             <div><strong>{review.reviewer}</strong><p>{review.text}</p>
+              {review.purchase && (
+                <p className="review-purchase">
+                  Purchased {review.car_year} {review.car_make} {review.car_model}
+                  {review.purchase_date ? ` on ${review.purchase_date}` : ""}
+                </p>
+              )}
               <time dateTime={review.created_at}>{new Date(review.created_at).toLocaleDateString()}</time>
             </div>
           </article>
@@ -75,8 +112,74 @@ export default function DealerDetail() {
             <h3>Share your experience</h3>
             <label htmlFor="review-text">Your review</label>
             <textarea id="review-text" required maxLength={2000} value={text} onChange={(event) => setText(event.target.value)} />
+            <label className="purchase-toggle">
+              <input
+                type="checkbox"
+                checked={purchase}
+                onChange={(event) => setPurchase(event.target.checked)}
+              />
+              I purchased a vehicle from this dealership
+            </label>
+            {purchase && (
+              <div className="purchase-fields">
+                <label htmlFor="purchase-date">Purchase date</label>
+                <input
+                  id="purchase-date"
+                  type="date"
+                  required
+                  value={purchaseDate}
+                  onChange={(event) => setPurchaseDate(event.target.value)}
+                />
+                <label htmlFor="car-make">Car make</label>
+                <select
+                  id="car-make"
+                  required
+                  value={carMake}
+                  onChange={(event) => {
+                    setCarMake(event.target.value);
+                    setCarModel("");
+                  }}
+                >
+                  <option value="">Select a make</option>
+                  {[...new Set(carModels.map((car) => car.CarMake))].map((make) => (
+                    <option key={make} value={make}>{make}</option>
+                  ))}
+                </select>
+                <label htmlFor="car-model">Car model</label>
+                <select
+                  id="car-model"
+                  required
+                  disabled={!carMake}
+                  value={carModel}
+                  onChange={(event) => setCarModel(event.target.value)}
+                >
+                  <option value="">Select a model</option>
+                  {carModels
+                    .filter((car) => car.CarMake === carMake)
+                    .map((car) => (
+                      <option key={car.CarModel} value={car.CarModel}>{car.CarModel}</option>
+                    ))}
+                </select>
+                <label htmlFor="car-year">Car year</label>
+                <input
+                  id="car-year"
+                  type="number"
+                  min="1886"
+                  max={new Date().getFullYear() + 1}
+                  required
+                  value={carYear}
+                  onChange={(event) => setCarYear(event.target.value)}
+                />
+              </div>
+            )}
             {message && <p className="notice success" role="status">{message}</p>}
             {error && <p className="notice error" role="alert">{error}</p>}
+            {sentiment && (
+              <p className="review-sentiment" role="img" aria-label={`${sentiment} sentiment`}>
+                {sentiment === "positive" ? "😊" : sentiment === "negative" ? "☹️" : "😐"}
+                <span>{sentiment} sentiment</span>
+              </p>
+            )}
             <button className="button" type="submit">Post review</button>
           </form>
         ) : (

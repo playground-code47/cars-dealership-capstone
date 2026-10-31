@@ -1,9 +1,8 @@
 from django.shortcuts import get_object_or_404
-from rest_framework import generics
-from rest_framework.decorators import api_view, permission_classes
+from rest_framework import generics, status
+from rest_framework.decorators import api_view
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from rest_framework import status
 
 from dealer_details.models import Dealership
 from .models import Review
@@ -24,6 +23,27 @@ def get_dealer_reviews(request, dealer_id):
     get_object_or_404(Dealership, pk=dealer_id)
     reviews = Review.objects.filter(dealership_id=dealer_id).select_related("reviewer")
     return Response(ReviewSerializer(reviews, many=True).data)
+
+
+@api_view(["GET"])
+def fetch_dealer_reviews(request, dealer_id):
+    get_object_or_404(Dealership, pk=dealer_id)
+    reviews = Review.objects.filter(dealership_id=dealer_id).select_related("reviewer")
+    return Response(
+        [
+            {
+                "name": review.reviewer.username,
+                "dealership": review.dealership_id,
+                "review": review.text,
+                "purchase": review.purchase,
+                "purchase_date": review.purchase_date,
+                "car_make": review.car_make,
+                "car_model": review.car_model,
+                "car_year": review.car_year,
+            }
+            for review in reviews
+        ]
+    )
 
 
 class CreateReviewView(generics.CreateAPIView):
@@ -48,3 +68,11 @@ def analyze_review(request):
     score = len(words & POSITIVE_WORDS) - len(words & NEGATIVE_WORDS)
     sentiment = "positive" if score > 0 else "negative" if score < 0 else "neutral"
     return Response({"sentiment": sentiment, "score": score})
+
+
+@api_view(["GET"])
+def analyze_review_compat(request, review_text):
+    words = {word.strip(".,!?;:()[]{}\"'").lower() for word in review_text.split()}
+    score = len(words & POSITIVE_WORDS) - len(words & NEGATIVE_WORDS)
+    sentiment = "positive" if score > 0 else "negative" if score < 0 else "neutral"
+    return Response({"sentiment": sentiment})

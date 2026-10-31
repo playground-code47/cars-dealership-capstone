@@ -1,5 +1,5 @@
-from django.contrib.auth import get_user_model
-from django.contrib.auth import authenticate
+
+from django.contrib.auth import get_user_model, authenticate
 from django.contrib.auth.password_validation import validate_password
 from rest_framework import serializers
 
@@ -7,11 +7,21 @@ User = get_user_model()
 
 
 class RegistrationSerializer(serializers.ModelSerializer):
-    password = serializers.CharField(write_only=True, validators=[validate_password])
+    password = serializers.CharField(
+        write_only=True,
+        validators=[validate_password]
+    )
 
     class Meta:
         model = User
-        fields = ["id", "username", "email", "password"]
+        fields = [
+            "id",
+            "username",
+            "first_name",
+            "last_name",
+            "email",
+            "password",
+        ]
         read_only_fields = ["id"]
 
     def create(self, validated_data):
@@ -28,7 +38,11 @@ class LoginSerializer(serializers.Serializer):
             username=attrs["username"],
             password=attrs["password"],
         )
+
         if user is None:
-            raise serializers.ValidationError("Invalid username or password.")
+            raise serializers.ValidationError(
+                "Invalid username or password."
+            )
+
         attrs["user"] = user
         return attrs
