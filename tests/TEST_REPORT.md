@@ -41,5 +41,8 @@ Eight genuine local screenshots are present in [`screenshots/`](../screenshots):
 
 ## Not externally verified
 
-- GitHub Actions run [41214157970](https://github.com/playground-code47/cars-dealership-capstone/actions/runs/41214157970) was triggered by the authorized push and is still in progress; wait for its result before claiming CI success.
 - Deployment is not complete; a Render account and deployment approval are required. No deployment URL is claimed.
+
+## GitHub Actions
+
+Workflow run [41214157970](https://github.com/playground-code47/cars-dealership-capstone/actions/runs/41214157970) completed successfully for application commit `a8c781550c2f9eea26e936751b5349f21326ace2`. Both the backend dependency/migration/check/test job and frontend install/test/build job passed.

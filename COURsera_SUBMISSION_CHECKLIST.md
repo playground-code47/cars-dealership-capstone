@@ -25,7 +25,7 @@ Statuses reflect verified workspace facts. An unexecuted external workflow or de
 | 19 | dealer_id_reviews screenshot | [`screenshots/dealer_id_reviews.png`](./screenshots/dealer_id_reviews.png) | COMPLETE | Captured a loaded dealer detail page with persisted reviews. |
 | 20 | dealership_review_submission screenshot | [`screenshots/dealership_review_submission.png`](./screenshots/dealership_review_submission.png) | COMPLETE | Captured the actual completed review form before submission. |
 | 21 | added_review screenshot | [`screenshots/added_review.png`](./screenshots/added_review.png) | COMPLETE | Captured the successful response and persisted review on the page. |
-| 22 | Successful GitHub Actions result | [GitHub Actions run](https://github.com/playground-code47/cars-dealership-capstone/actions/runs/41214157970) | PENDING | Push triggered workflow run 41214157970; status is in progress, not yet verified successful. |
+| 22 | Successful GitHub Actions result | [GitHub Actions run](https://github.com/playground-code47/cars-dealership-capstone/actions/runs/41214157970) | COMPLETE | Both backend and frontend jobs completed successfully for the application commit. |
 | 23 | Actual deployment URL | [`deploymentURL.txt`](./deploymentURL.txt) | BLOCKED | Requires Render account authorization and a successful deployment. |
 | 24 | deployed_landingpage screenshot | [`screenshots/`](./screenshots) | BLOCKED | Requires a real deployment URL. |
 | 25 | deployed_loggedin screenshot | [`screenshots/`](./screenshots) | BLOCKED | Requires a real deployment and account. |
