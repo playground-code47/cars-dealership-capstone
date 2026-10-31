@@ -2,6 +2,8 @@
 
 A full-stack dealership discovery and customer-review application built for the IBM Full Stack Software Developer Coursera capstone.
 
+**GitHub repository:** [playground-code47/cars-dealership-capstone](https://github.com/playground-code47/cars-dealership-capstone)
+
 ## Features
 
 - Responsive React experience with dealership browsing and state filtering (including Kansas).
@@ -94,14 +96,13 @@ The backend tests use Django's isolated test database. `seed_demo_data` uses sta
 
 ## CI
 
-GitHub Actions runs Django checks/tests and the frontend tests/production build for pushes and pull requests to `main` or `master`. The workflow cannot report a GitHub run until this workspace is pushed to a GitHub repository.
+GitHub Actions runs Django checks/tests and the frontend tests/production build for pushes and pull requests to `main` or `master`. [View workflow runs](https://github.com/playground-code47/cars-dealership-capstone/actions).
 
-This workspace is initialized as a local Git repository on `main`; no remote or commit has been created. After choosing your GitHub repository and authorizing the push, connect it with:
+This workspace is connected to the `main` branch of the repository above. To publish later changes:
 
 ```powershell
-git remote add origin https://github.com/OWNER/REPOSITORY.git
 git add .
-git commit -m "Build cars dealership capstone"
+git commit -m "Describe your changes"
 git push -u origin main
 ```
 

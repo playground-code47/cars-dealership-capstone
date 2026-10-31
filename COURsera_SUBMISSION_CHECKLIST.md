@@ -4,13 +4,13 @@ Statuses reflect verified workspace facts. An unexecuted external workflow or de
 
 | # | Required deliverable | File location or URL | Status | Verification details |
 |---:|---|---|---|---|
-| 1 | README with repository/project details | [`README.md`](./README.md) | BLOCKED | README is complete locally; GitHub repository URL requires an authorized repository/push. |
+| 1 | README with repository/project details | [README.md on GitHub](https://github.com/playground-code47/cars-dealership-capstone/blob/main/README.md) | COMPLETE | Pushed to the authorized GitHub repository. |
 | 2 | Genuine Django server output | [`django_server`](./django_server) | COMPLETE | Genuine runserver startup output captured from the running server. |
-| 3 | About page GitHub URL | [`About.html`](./server/frontend/static/About.html) | BLOCKED | File is served locally (HTTP 200); GitHub URL requires repository push. |
-| 4 | Contact page GitHub URL | [`Contact.html`](./server/frontend/static/Contact.html) | BLOCKED | File is served locally (HTTP 200); GitHub URL requires repository push. |
+| 3 | About page GitHub URL | [About.html on GitHub](https://github.com/playground-code47/cars-dealership-capstone/blob/main/server/frontend/static/About.html) | COMPLETE | File is present in the pushed `main` branch and serves locally (HTTP 200). |
+| 4 | Contact page GitHub URL | [Contact.html on GitHub](https://github.com/playground-code47/cars-dealership-capstone/blob/main/server/frontend/static/Contact.html) | COMPLETE | File is present in the pushed `main` branch and serves locally (HTTP 200). |
 | 5 | loginuser cURL output | [`curl_outputs.md`](./tests/curl_outputs.md) | COMPLETE | Actual local response captured (HTTP 200); token redacted. |
 | 6 | logoutuser cURL output | [`curl_outputs.md`](./tests/curl_outputs.md) | COMPLETE | Actual authenticated logout response captured (HTTP 200). |
-| 7 | Register.jsx GitHub URL | [`Register.jsx`](./server/frontend/src/components/Register/Register.jsx) | BLOCKED | Registration file is complete and browser-tested; GitHub URL requires repository push. |
+| 7 | Register.jsx GitHub URL | [Register.jsx on GitHub](https://github.com/playground-code47/cars-dealership-capstone/blob/main/server/frontend/src/components/Register/Register.jsx) | COMPLETE | Registration file is present in the pushed `main` branch and browser-tested. |
 | 8 | getdealerreviews cURL output | [`curl_outputs.md`](./tests/curl_outputs.md) | COMPLETE | Actual response captured (HTTP 200). |
 | 9 | getalldealers cURL output | [`curl_outputs.md`](./tests/curl_outputs.md) | COMPLETE | Actual response captured (HTTP 200; five seeded dealers). |
 | 10 | getdealerbyid cURL output | [`curl_outputs.md`](./tests/curl_outputs.md) | COMPLETE | Actual response captured (HTTP 200). |
@@ -25,7 +25,7 @@ Statuses reflect verified workspace facts. An unexecuted external workflow or de
 | 19 | dealer_id_reviews screenshot | [`screenshots/dealer_id_reviews.png`](./screenshots/dealer_id_reviews.png) | COMPLETE | Captured a loaded dealer detail page with persisted reviews. |
 | 20 | dealership_review_submission screenshot | [`screenshots/dealership_review_submission.png`](./screenshots/dealership_review_submission.png) | COMPLETE | Captured the actual completed review form before submission. |
 | 21 | added_review screenshot | [`screenshots/added_review.png`](./screenshots/added_review.png) | COMPLETE | Captured the successful response and persisted review on the page. |
-| 22 | Successful GitHub Actions result | `.github/workflows/main.yml` / GitHub Actions URL | BLOCKED | Local Git is initialized on `main`, but no remote or commit exists; an authorized GitHub destination and push are required. |
+| 22 | Successful GitHub Actions result | [GitHub Actions run](https://github.com/playground-code47/cars-dealership-capstone/actions/runs/41214157970) | PENDING | Push triggered workflow run 41214157970; status is in progress, not yet verified successful. |
 | 23 | Actual deployment URL | [`deploymentURL.txt`](./deploymentURL.txt) | BLOCKED | Requires Render account authorization and a successful deployment. |
 | 24 | deployed_landingpage screenshot | [`screenshots/`](./screenshots) | BLOCKED | Requires a real deployment URL. |
 | 25 | deployed_loggedin screenshot | [`screenshots/`](./screenshots) | BLOCKED | Requires a real deployment and account. |
